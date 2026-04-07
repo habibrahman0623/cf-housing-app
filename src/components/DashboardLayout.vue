@@ -23,20 +23,55 @@
     </aside>
 
     <main class="flex-1 flex flex-col overflow-hidden">
-      <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-        <h2 class="text-xl font-semibold text-gray-800">{{ activeTab }}</h2>
+      <header class="bg-gradient-to-r from-emerald-800 to-teal-700 shadow-lg px-6 py-4 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-white italic tracking-wide">{{ activeTab }}</h2>
         <div class="flex items-center space-x-4">
-          <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Secure</span>
-          <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Admin</span>
+          <div class="flex items-center bg-white/20 backdrop-blur-md px-4 py-1 rounded-lg border border-white/30 text-white text-sm">
+            <span class="mr-2">🛡️</span> Secure
+          </div>
+          <div class="flex items-center bg-white/20 backdrop-blur-md px-4 py-1 rounded-lg border border-white/30 text-white text-sm">
+            <span class="mr-2">👤</span> Admin
+          </div>
         </div>
       </header>
-
-      <section class="flex-1 overflow-y-auto p-6">
-        <div v-if="activeTab === 'Dashboard'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
+      <!-- dashboard-bg ক্লাসটি এখানে আছে কি না নিশ্চিত করুন -->
+      <section class="flex-1 overflow-y-auto p-6 dashboard-bg relative">
+        <div class="content-wrapper relative z-10"> 
+          <div v-if="activeTab === 'Dashboard'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- আপনার কার্ডগুলো এখানে থাকবে -->
+            <div class="bg-white/80 backdrop-blur-md p-6 rounded-lg shadow border-l-4 border-blue-500">
+              <p class="text-sm text-gray-500 uppercase font-semibold">Total Members</p>
+              <p class="text-3xl font-bold text-slate-800">60</p>
+            </div>
+            <div class="bg-white/80 p-6 rounded-lg shadow border-l-4 border-green-500">
+            <p class="text-sm text-gray-500 uppercase">Monthly Collection</p>
+            <p class="text-2xl font-bold">৳ 45,000</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
+            <p class="text-sm text-gray-500 uppercase">Total Due</p>
+            <p class="text-2xl font-bold">৳ 12,500</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
+            <p class="text-sm text-gray-500 uppercase">Fine Pending</p>
+            <p class="text-2xl font-bold">৳ 1,200</p>
+          </div>
+          
+          </div>
+          <div v-else-if="activeTab === 'Members'">
+            <MembersView />
+          </div>
+          <div v-else class="text-center text-gray-800 font-medium mt-20">
+            {{ activeTab }} মডিউলটি তৈরির কাজ চলছে...
+          </div>
+        </div>
+      </section>
+      <!-- <section class="flex-1 overflow-y-auto p-6">
+        <div class="content-wrapper"> <div v-if="activeTab === 'Dashboard'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow border-l-4 border-blue-500">
             <p class="text-sm text-gray-500 uppercase">Total Members</p>
             <p class="text-2xl font-bold">60</p>
           </div>
+         
           <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
             <p class="text-sm text-gray-500 uppercase">Monthly Collection</p>
             <p class="text-2xl font-bold">৳ 45,000</p>
@@ -49,12 +84,14 @@
             <p class="text-sm text-gray-500 uppercase">Fine Pending</p>
             <p class="text-2xl font-bold">৳ 1,200</p>
           </div>
+          
         </div>
-        
+         
         <div v-else class="text-center text-gray-500 mt-20">
           {{ activeTab }} মডিউলটি তৈরির কাজ চলছে...
         </div>
-      </section>
+        </div> 
+      </section> -->
     </main>
   </div>
 </template>
@@ -63,13 +100,16 @@
 import { ref } from 'vue';
 
 const activeTab = ref('Dashboard');
+import MembersView from './MembersView.vue';
 
 const menuItems = [
   { name: 'Dashboard', label: 'Dashboard', icon: '📊' },
   { name: 'Members', label: 'Members', icon: '👥' },
-  { name: 'Monthly Collection', label: 'Monthly Collection', icon: '📅' },
+  { name: 'Monthly Billing', label: 'Monthly Billing', icon: '🗓️' },
+  { name: 'Special Billing', label: 'Special Billing', icon: '🌟' }, 
+  { name: 'Bill Collection', label: 'Bill Collection', icon: '💰' }, 
   { name: 'Expenses', label: 'Expenses', icon: '💸' },
-  { name: 'Reports', label: 'Reports', icon: '📝' },
+  { name: 'Reports', label: 'Reports', icon: '📈' },
   { name: 'Settings', label: 'Settings', icon: '⚙️' },
 ];
 </script>
