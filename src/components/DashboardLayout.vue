@@ -65,33 +65,6 @@
           </div>
         </div>
       </section>
-      <!-- <section class="flex-1 overflow-y-auto p-6">
-        <div class="content-wrapper"> <div v-if="activeTab === 'Dashboard'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow border-l-4 border-blue-500">
-            <p class="text-sm text-gray-500 uppercase">Total Members</p>
-            <p class="text-2xl font-bold">60</p>
-          </div>
-         
-          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-            <p class="text-sm text-gray-500 uppercase">Monthly Collection</p>
-            <p class="text-2xl font-bold">৳ 45,000</p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
-            <p class="text-sm text-gray-500 uppercase">Total Due</p>
-            <p class="text-2xl font-bold">৳ 12,500</p>
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
-            <p class="text-sm text-gray-500 uppercase">Fine Pending</p>
-            <p class="text-2xl font-bold">৳ 1,200</p>
-          </div>
-          
-        </div>
-         
-        <div v-else class="text-center text-gray-500 mt-20">
-          {{ activeTab }} মডিউলটি তৈরির কাজ চলছে...
-        </div>
-        </div> 
-      </section> -->
     </main>
   </div>
 </template>
