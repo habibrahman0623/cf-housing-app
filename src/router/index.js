@@ -11,6 +11,8 @@ import BillCollectionView from '../views/BillCollectionView.vue';
 import ExpensesView from '../views/ExpensesView.vue';
 import ReportsView from '../views/ReportsView.vue';
 import SettingsView from '../views/SettingsView.vue';
+import AssetsView from '../views/AssetsView.vue';
+import LoansView from '../views/LoansView.vue';
 
 const routes = [
   {
@@ -30,6 +32,8 @@ const routes = [
       { path: 'monthly-billing', name: 'Monthly Billing', component: MonthlyBillingView },
       { path: 'special-billing', name: 'Special Billing', component: SpecialBillingView },
       { path: 'bill-collection', name: 'Bill Collection', component: BillCollectionView },
+      { path: 'assets', name: 'Assets', component: AssetsView },
+      { path: 'liability-loans', name: 'Liability Loans', component: LoansView },
       { path: 'expenses', name: 'Expenses', component: ExpensesView },
       { path: 'reports', name: 'Reports', component: ReportsView },
       { path: 'settings', name: 'Settings', component: SettingsView },

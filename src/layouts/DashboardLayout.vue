@@ -52,6 +52,8 @@ const menuItems = [
   { name: 'Monthly Billing', label: 'Monthly Billing', icon: '🗓️' },
   { name: 'Special Billing', label: 'Special Billing', icon: '🌟' },
   { name: 'Bill Collection', label: 'Bill Collection', icon: '💰' },
+  { name: 'Assets', label: 'Asset Management', icon: '🏠' }, // বা '🏛️' 
+  { name: 'Liability Loans', label: 'Liability & Loans', icon: '🏦' }, // বা '📉' 
   { name: 'Expenses', label: 'Expenses', icon: '💸' },
   { name: 'Reports', label: 'Reports', icon: '📈' },
   { name: 'Settings', label: 'Settings', icon: '⚙️' },
