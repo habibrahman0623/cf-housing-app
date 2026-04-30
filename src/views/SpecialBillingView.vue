@@ -30,9 +30,14 @@
     <!-- Billing History Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
       <div class="p-5 border-b bg-gray-50/50 flex justify-between items-center">
-        <h3 class="font-black text-slate-700 uppercase tracking-wider text-sm">Recent Special Bills</h3>
+        <div>
+          <h3 class="font-black text-slate-700 uppercase tracking-wider text-sm">Latest Special Bills</h3>
+          <p v-if="specialBills.length" class="text-[10px] text-emerald-600 font-bold uppercase mt-1">
+            Bill Name: {{ specialBills[0].bill_name }}
+          </p>
+        </div>
         <button class="text-xs bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-bold hover:bg-emerald-100 transition-colors">
-          View All History ➔
+          View All Special History ➔
         </button>
       </div>
       
@@ -40,20 +45,58 @@
         <table class="w-full text-left border-collapse">
           <thead class="bg-slate-50 text-[10px] uppercase text-slate-500 font-bold tracking-widest">
             <tr>
-              <th class="px-6 py-4 border-b">Billing Name</th>
-              <th class="px-6 py-4 border-b">Rate/Share</th>
-              <th class="px-6 py-4 border-b">Total Generated</th>
+              <th class="px-4 py-4 border-b text-center w-12">#SL</th>
+              <th class="px-6 py-4 border-b">Member</th>
+              <th class="px-6 py-4 border-b text-right">Main Bill (P/Paid)</th>
+              <th class="px-6 py-4 border-b text-right">Fine (F/Paid)</th>
+              <th class="px-6 py-4 border-b text-right">Total Due</th>
               <th class="px-6 py-4 border-b text-center">Status</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-sm font-medium">
-            <tr v-for="i in 5" :key="i" class="hover:bg-slate-50/50 transition-colors">
-              <td class="px-6 py-4 text-slate-700 font-bold">Special Bill April 2026</td>
-              <td class="px-6 py-4 text-slate-600">৳ 3000.00</td>
-              <td class="px-6 py-4 text-slate-600">৳ 1,80,000 (60 shares)</td>
+            <tr v-if="isLoading">
+              <td colspan="6" class="text-center py-10 text-slate-400 font-bold italic animate-pulse">Loading Special Bills...</td>
+            </tr>
+            <tr v-else-if="specialBills.length === 0" class="text-center">
+              <td colspan="6" class="py-10 text-slate-400 font-bold">কোন স্পেশাল বিল পাওয়া যায়নি।</td>
+            </tr>
+            
+            <tr v-for="(bill, idx) in specialBills" :key="bill.id" class="hover:bg-slate-50/50 transition-colors">
+              <!-- SL No -->
+              <td class="px-4 py-4 text-center text-slate-400 font-bold text-xs border-r border-slate-50">
+                {{ idx + 1 }}
+              </td>
+
+              <!-- Member Info -->
+              <td class="px-6 py-4">
+                <div class="flex flex-col">
+                  <span class="text-slate-700 font-black uppercase text-xs">{{ bill.member.name }}</span>
+                  <span class="text-[10px] text-slate-400 font-bold tracking-tighter">{{ bill.member.member_code }}</span>
+                </div>
+              </td>
+
+              <!-- Main Bill Amount -->
+              <td class="px-6 py-4 text-right border-l border-slate-50/50">
+                <div class="text-slate-700 font-bold">৳ {{ bill.amount || 0}}</div>
+                <div class="text-[10px] text-green-500 font-semibold">Paid: {{ bill.paid_amount || 0}}</div>
+              </td>
+
+              <!-- Fine Amount -->
+              <td class="px-6 py-4 text-right">
+                <div class="text-slate-600 font-bold">৳ {{ bill.fine_amount || 0}}</div>
+                <div class="text-[10px] text-orange-500 font-semibold">Paid: {{ bill.fine_paid_amount || 0}}</div>
+              </td>
+
+              <!-- Total Due Calculation -->
+              <td class="px-6 py-4 text-right font-black text-rose-500 bg-slate-50/30">
+                ৳ {{ ((bill.amount || 0 )+ (bill.fine_amount || 0))- ((bill.paid_amount ||0)  + (bill.fine_paid_amount || 0)) }}
+              </td>
+
+              <!-- Status Badge -->
               <td class="px-6 py-4 text-center">
-                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-emerald-200">
-                  SUCCESS
+                <span :class="bill.is_paid ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-100'" 
+                      class="px-3 py-1 rounded-full text-[10px] font-black uppercase border">
+                  {{ bill.is_paid ? 'PAID' : (bill.status || 'PENDING') }}
                 </span>
               </td>
             </tr>
@@ -236,7 +279,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import api from '../api';
 
@@ -396,6 +439,27 @@ const cancelBill = async () => {
     isCancelingBill.value = false;
   }
 };
+
+// State Management
+const specialBills = ref([]);
+const isLoading = ref(false);
+
+// Fetch Latest Special Bills
+const fetchSpecialBills = async () => {
+    isLoading.value = true;
+    try {
+        const response = await api.get('/billing/special-bills');
+        specialBills.value = response.data;
+    } catch (err) {
+        console.error("Error fetching special bills:", err);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchSpecialBills();
+});
 
 </script>
 

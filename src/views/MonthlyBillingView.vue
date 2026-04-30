@@ -28,7 +28,7 @@
     </div>
 
     <!-- Billing History Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
+    <!-- <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
       <div class="p-5 border-b bg-gray-50/50 flex justify-between items-center">
         <h3 class="font-black text-slate-700 uppercase tracking-wider text-sm">Recent Monthly Bills</h3>
         <button class="text-xs bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-bold hover:bg-emerald-100 transition-colors">
@@ -60,7 +60,81 @@
           </tbody>
         </table>
       </div>
+    </div> -->
+    <!-- Billing History Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
+  <div class="p-5 border-b bg-gray-50/50 flex justify-between items-center">
+    <div>
+        <h3 class="font-black text-slate-700 uppercase tracking-wider text-sm">Latest Bills</h3>
+        <p v-if="bills.length" class="text-[10px] text-emerald-600 font-bold uppercase mt-1">
+            Showing for: {{ bills[0].billing_period }}
+        </p>
     </div>
+    <button class="text-xs bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-bold hover:bg-emerald-100 transition-colors">
+      View All History ➔
+    </button>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-slate-50 text-[10px] uppercase text-slate-500 font-bold tracking-widest">
+        <tr>
+          <!-- সিরিয়াল নম্বর হেডার -->
+          <th class="px-4 py-4 border-b text-center w-12">#SL</th>
+          <th class="px-6 py-4 border-b">Member</th>
+          <th class="px-6 py-4 border-b text-right">Main Bill (P/Paid)</th>
+          <th class="px-6 py-4 border-b text-right">Fine (F/Paid)</th>
+          <th class="px-6 py-4 border-b text-right">Total Due</th>
+          <th class="px-6 py-4 border-b text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 text-sm font-medium">
+        <tr v-if="isLoading">
+            <td colspan="6" class="text-center py-10 text-slate-400 font-bold italic animate-pulse">Loading Bills...</td>
+        </tr>
+        <tr v-else-if="bills.length === 0" class="text-center">
+            <td colspan="6" class="py-10 text-slate-400 font-bold">কোন বিল পাওয়া যায়নি।</td>
+        </tr>
+        
+        <!-- ইনডেক্স (idx) সহ লুপ -->
+        <tr v-for="(bill, idx) in bills" :key="bill.id" class="hover:bg-slate-50/50 transition-colors">
+          <!-- সিরিয়াল নম্বর সেল -->
+          <td class="px-4 py-4 text-center text-slate-400 font-bold text-xs border-r border-slate-50">
+            {{ idx + 1 }}
+          </td>
+          
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+                <span class="text-slate-700 font-black uppercase text-xs">{{ bill.member.name }}</span>
+                <span class="text-[10px] text-slate-400 font-bold tracking-tighter">{{ bill.member.member_code }}</span>
+            </div>
+          </td>
+          
+          <td class="px-6 py-4 text-right">
+            <div class="text-slate-700 font-bold">৳ {{ bill.amount }}</div>
+            <div class="text-[10px] text-green-500">Paid: {{ bill.paid_amount }}</div>
+          </td>
+          
+          <td class="px-6 py-4 text-right">
+            <div class="text-slate-600 font-bold">৳ {{ bill.fine_amount }}</div>
+            <div class="text-[10px] text-orange-500">Paid: {{ bill.fine_paid_amount }}</div>
+          </td>
+          
+          <td class="px-6 py-4 text-right font-black text-rose-500">
+            ৳ {{ (bill.amount + bill.fine_amount) - (bill.paid_amount + bill.fine_paid_amount) }}
+          </td>
+          
+          <td class="px-6 py-4 text-center">
+            <span :class="bill.is_paid ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-100'" 
+                  class="px-3 py-1 rounded-full text-[10px] font-black uppercase border">
+              {{ bill.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
     <!-- Generate Monthly Bill Modal -->
     <Teleport to="body">
@@ -226,7 +300,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import api from '../api';
 
@@ -381,6 +455,28 @@ const cancelBill = async () => {
     isCancelingBill.value = false;
   }
 };
+
+// State Management
+const bills = ref([]);
+const isLoading = ref(false);
+
+// Fetch Latest Bills
+const fetchLatestBills = async () => {
+    isLoading.value = true;
+    try {
+        // ব্যাকএন্ড এপিআই এখন ডিফল্টভাবে লেটেস্ট পিরিয়ড রিটার্ন করবে
+        const response = await api.get('/billing/monthly-bills');
+        bills.value = response.data;
+    } catch (err) {
+        console.error("Error fetching bills:", err);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchLatestBills();
+});
 
 </script>
 

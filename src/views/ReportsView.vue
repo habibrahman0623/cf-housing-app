@@ -41,38 +41,107 @@
 
     <div v-else class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
       <table v-if="activeTab === 'monthly'" id="report-table" class="w-full text-left">
-        <thead class="bg-slate-800 text-[9px] font-black uppercase text-slate-400 border-b">
-          <tr><th class="px-8 py-5">Period</th><th class="px-8 py-5 text-right">Target</th><th class="px-8 py-5 text-right">Collected</th><th class="px-8 py-5 text-right">Due</th><th class="px-8 py-5 text-center">Status</th></tr>
-        </thead>
-        <tbody class="text-sm">
-          <tr v-for="(row, idx) in monthlyData" :key="row.month" 
-              :class="idx % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'" 
-              class="hover:bg-indigo-50/50 transition-colors border-b border-slate-50">
-            <td class="px-8 py-5 font-black text-slate-700 uppercase">{{ row.month }}</td>
-            <td class="px-8 py-5 text-right font-bold">৳ {{ row.total_bill }}</td>
-            <td class="px-8 py-5 text-right font-bold text-green-600">৳ {{ row.total_collected }}</td>
-            <td class="px-8 py-5 text-right font-bold text-rose-500">৳ {{ row.total_due }}</td>
-            <td class="px-8 py-5 text-center"><span class="px-3 py-1 bg-white border border-slate-100 rounded-full text-[10px] font-black shadow-sm">{{ row.performance }}</span></td>
-          </tr>
-        </tbody>
-      </table>
+  <thead class="bg-slate-800 text-[9px] font-black uppercase text-slate-400 border-b">
+    <tr>
+      <th class="px-8 py-5">Period</th>
+      <th class="px-8 py-5 text-right">Target (P + F)</th>
+      <th class="px-8 py-5 text-right">Collected (P + F)</th>
+      <th class="px-8 py-5 text-right text-rose-400">Due</th>
+      <th class="px-8 py-5 text-center">Status</th>
+    </tr>
+  </thead>
+  <tbody class="text-sm">
+    <tr v-for="(row, idx) in monthlyData" :key="row.month" 
+        :class="idx % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'" 
+        class="hover:bg-indigo-50/50 transition-colors border-b border-slate-50">
+      
+      <!-- 1. Month/Period -->
+      <td class="px-8 py-5 font-black text-slate-700 uppercase">
+        {{ row.month }}
+      </td>
+
+      <!-- 2. Target Column (Total with breakdown) -->
+      <td class="px-8 py-5 text-right">
+        <p class="font-bold text-slate-800 leading-none">৳ {{ row.total_bill }}</p>
+        <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
+          P: {{ row.principal_stats.target }} | F: {{ row.fine_stats.target }}
+        </div>
+      </td>
+
+      <!-- 3. Collected Column (Total with breakdown) -->
+      <td class="px-8 py-5 text-right">
+        <p class="font-bold text-green-600 leading-none">৳ {{ row.total_collected }}</p>
+        <div class="text-[9px] font-bold text-green-400/80 mt-1 uppercase tracking-tighter">
+          P: {{ row.principal_stats.collected }} | F: {{ row.fine_stats.collected }}
+        </div>
+      </td>
+
+      <!-- 4. Due Column -->
+      <td class="px-8 py-5 text-right font-black text-rose-500">
+        ৳ {{ row.total_due }}
+      </td>
+
+      <!-- 5. Performance Status -->
+      <td class="px-8 py-5 text-center">
+        <span class="px-3 py-1 bg-white border border-slate-100 rounded-full text-[10px] font-black shadow-sm"
+              :class="row.performance === '100.00%' ? 'text-green-600' : 'text-indigo-600'">
+          {{ row.performance }}
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
       <table v-if="activeTab === 'special'" id="report-table" class="w-full text-left">
-        <thead class="bg-slate-800 text-[9px] font-black uppercase text-slate-400 border-b">
-          <tr><th class="px-8 py-5">Bill Name</th><th class="px-8 py-5 text-right">Total</th><th class="px-8 py-5 text-right">Collected</th><th class="px-8 py-5 text-right">Outstanding</th></tr>
-        </thead>
-        <tbody class="text-sm">
-          <tr v-for="(row, idx) in specialData" :key="row.bill_name" 
-              :class="idx % 2 === 0 ? 'bg-white' : 'bg-emerald-50/30'"
-              class="hover:bg-emerald-50/50 transition-colors border-b border-slate-50">
-            <td class="px-8 py-5 font-black text-slate-700 uppercase">{{ row.bill_name }}</td>
-            <td class="px-8 py-5 text-right font-bold">৳ {{ row.total_bill }}</td>
-            <td class="px-8 py-5 text-right font-bold text-emerald-600">৳ {{ row.total_collected }}</td>
-            <td class="px-8 py-5 text-right font-bold text-orange-500">৳ {{ row.total_due }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <thead class="bg-slate-800 text-[9px] font-black uppercase text-slate-400 border-b">
+    <tr>
+      <th class="px-8 py-5">Bill Name</th>
+      <th class="px-8 py-5 text-right">Total (P + F)</th>
+      <th class="px-8 py-5 text-right">Collected (P + F)</th>
+      <th class="px-8 py-5 text-right text-orange-400">Due</th>
+      <th class="px-8 py-5 text-center">Status</th>
+    </tr>
+  </thead>
+  <tbody class="text-sm">
+    <tr v-for="(row, idx) in specialData" :key="row.bill_name" 
+        :class="idx % 2 === 0 ? 'bg-white' : 'bg-emerald-50/30'"
+        class="hover:bg-emerald-50/50 transition-colors border-b border-slate-50">
+      
+      <!-- 1. Bill Name -->
+      <td class="px-8 py-5 font-black text-slate-700 uppercase">
+        {{ row.bill_name }}
+      </td>
 
+      <!-- 2. Total (Principal + Fine Breakdown) -->
+      <td class="px-8 py-5 text-right">
+        <p class="font-bold text-slate-800 leading-none">৳ {{ row.total_bill }}</p>
+        <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
+          P: {{ row.principal_stats.target }} | F: {{ row.fine_stats.target }}
+        </div>
+      </td>
+
+      <!-- 3. Collected (Principal + Fine Breakdown) -->
+      <td class="px-8 py-5 text-right">
+        <p class="font-bold text-emerald-600 leading-none">৳ {{ row.total_collected }}</p>
+        <div class="text-[9px] font-bold text-emerald-500/80 mt-1 uppercase tracking-tighter">
+          P: {{ row.principal_stats.collected }} | F: {{ row.fine_stats.collected }}
+        </div>
+      </td>
+
+      <!-- 4. Outstanding (Due) -->
+      <td class="px-8 py-5 text-right font-black text-orange-500">
+        ৳ {{ row.total_due }}
+      </td>
+
+      <!-- 5. Performance Status -->
+      <td class="px-8 py-5 text-center">
+        <span class="px-3 py-1 bg-white border border-slate-100 rounded-full text-[10px] font-black shadow-sm text-emerald-600">
+          {{ row.performance }}
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
       <table v-if="activeTab === 'defaulters'" id="report-table" class="w-full text-left">
         <thead class="bg-slate-800 text-[9px] font-black uppercase text-slate-400 border-b">
           <tr><th class="px-8 py-5">Member</th><th class="px-8 py-5 text-right">Monthly</th><th class="px-8 py-5 text-right">Special</th><th class="px-8 py-5 text-right">Grand Total</th></tr>
